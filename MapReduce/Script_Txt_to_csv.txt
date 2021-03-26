@@ -1,0 +1,8 @@
+
+#sur Powershell
+
+import-csv .\resultat_mapreduce_co2.txt -delimiter "`t" | export-csv csv_mapreduce.csv -NoTypeInformation
+
+
+$Test = Get-Content .\csv_mapreduce.csv
+$Test.Replace('","',",").TrimStart('"').TrimEnd('"') | Out-File .\TEST.csv -Force -Confirm:$false
