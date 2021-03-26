@@ -1,0 +1,67 @@
+
+# Compilation java
+javac CO2*
+
+mkdir -p org/co2
+mv CO2*.class org/co2/
+
+
+jar -cvf CO2.jar -C . org
+
+# Insérer le fichier csv sur HDFS:
+hadoop fs -put data/CO2.csv /user/pcorentin
+
+# Vérifiez sa présence sur HDFS:
+pcorentin@vps-f1f17a1e:~/MapReduce$ hadoop fs -ls /user/pcorentin/
+Found 1 items
+-rw-r--r--   1 pcorentin studentgroup      39354 2021-03-26 13:45 /user/pcorentin/CO2.csv
+
+
+
+# Supprime les résultats si déja réalisés
+hadoop fs -rm /user/pcorentin/resultsmapreduce/*
+hadoop fs -rmdir /user/pcorentin/resultsmapreduce
+
+# Exécutez le programme
+hadoop jar CO2.jar org.co2.CO2 /user/pcorentin/CO2.csv /user/pcorentin/resultsmapreduce
+
+# Consulter les résultats
+hadoop fs -ls /user/pcorentin/resultsmapreduce
+
+Found 2 items
+-rw-r--r--   1 pcorentin studentgroup          0 2021-03-26 13:49 /user/pcorentin/resultsmapreduce/_SUCCESS
+-rw-r--r--   1 pcorentin studentgroup        396 2021-03-26 13:49 /user/pcorentin/resultsmapreduce/part-r-00000
+
+
+#Visualisation des résultats 
+hadoop fs -cat /user/pcorentin/resultsmapreduce/part-r-00000
+
+AUDI    -2400   26      191
+BENTLEY 0       84      102
+BMW     -631    39      80
+CITROEN -6000   0       347
+DS      -3000   16      159
+HYUNDAI -4000   8       151
+JAGUAR  -6000   0       271
+KIA     -3000   15      132
+LAND    0       69      78
+MERCEDES        7790    187     749
+MINI    -3000   21      126
+MITSUBISHI      0       40      98
+NISSAN  5802    160     681
+PEUGEOT -3000   15      144
+PORSCHE 0       69      89
+RENAULT -6000   0       206
+SKODA   -666    27      98
+SMART   -6000   0       191
+TESLA   -6000   0       245
+TOYOTA  0       32      43
+VOLKSWAGEN      -1714   23      96
+VOLVO   0       42      72
+
+
+# Export du fichier de résultats depuis hdfs
+hadoop fs -get /user/pcorentin/resultsmapreduce/part-r-00000 
+
+# Renommer le fichier de résultats
+mv part-r-00000  resultat_mapreduce_co2.txt
